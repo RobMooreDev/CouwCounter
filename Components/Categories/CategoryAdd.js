@@ -1,12 +1,30 @@
-import {Text, View} from "react-native";
-import React from "react";
+import React, {useState} from "react";
+import {StyleSheet, View} from 'react-native';
+import {ColorPicker} from 'react-native-color-picker';
+
+
 
 function CategoryAdd() {
+    const [color, setColor] = useState('');
     return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text>CategoryAdd!</Text>
+        <View style={styles.container}>
+            <ColorPicker
+                oldColor='purple'
+                color={color}
+                onColorChange={color => setColor(color)}
+                onColorSelected={color => alert(`Color selected: ${color}`)}
+                onOldColorSelected={color => alert(`Old color selected: ${color}`)}
+                style={{flex: 1}}
+            />
         </View>
     );
 }
 
-export default CategoryAdd
+const styles = StyleSheet.create({
+    container: {flex: 1, padding: 45, backgroundColor: '#212021'}
+})
+
+
+
+
+export default CategoryAdd;

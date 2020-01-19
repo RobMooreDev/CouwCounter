@@ -1,4 +1,4 @@
-import {Text, View} from "react-native";
+import {Text, View, StyleSheet} from "react-native";
 import React from "react";
 
 function Home() {
@@ -8,5 +8,7 @@ function Home() {
         </View>
     );
 }
+
+const styles = St
 
 export default Home
