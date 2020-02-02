@@ -1,14 +1,57 @@
-import React from "react";
-import {Button, Text, View} from "react-native";
+import React, {useState} from "react";
+import {Button, StyleSheet, View} from 'react-native';
+import {Container, Content, Form, Input, Item, Label} from 'native-base';
+import database from "../../Database/database";
+import NavBar from "../Navigation/NavBar";
 
 function ItemAdd(props) {
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const color = props.navigation.getParam('newColor', '#232323');
+    const textColor = props.navigation.getParam('text', '#f2f2f2');
+
+    const styles = StyleSheet.create({
+        colorButton: {
+            color: textColor
+        }
+    });
     return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text>ItemAdd!</Text>
-            <Button title={'Add Category'} onPress={() => {
-                props.navigation.navigate('SelectCategory');
-            }}/>
-        </View>
+        <Container>
+            <NavBar
+                navigation={props.navigation}
+                title={'Add Category'}
+            />
+            <Content>
+                    <Form>
+                        <Item stackedLabel>
+                            <Label>Name</Label>
+                            <Input placeholder='' onChangeText={(value) => setName(value)}/>
+                        </Item>
+                        <Item stackedLabel last>
+                            <Label>Description</Label>
+                            <Input placeholder=''
+                                   onChangeText={(value) => setDescription(value)}/>
+                        </Item>
+                        <Button color={color} style={styles.colorButton} title='Add Barcode' onPress={() => {
+                            props.navigation.navigate({
+                                routeName: 'SelectColor',
+                                params: {
+                                    parent: 'ItemAdd',
+                                    oldColor: `${color}`
+                                }
+                            })
+                        }}/>
+                        <Button title='Create category' onPress={() => {
+                            database.createCategory(name, description, color);
+                            database.viewAllCategory().then((result) => {
+                                props.navigation.navigate('CategoryList', {
+                                    list: result
+                                });
+                            })
+                        }}/>
+                    </Form>
+            </Content>
+        </Container>
     );
 }
 

@@ -1,14 +1,18 @@
-import {Text, View, StyleSheet} from "react-native";
+import {Button, View} from "react-native";
 import React from "react";
 
-function Home() {
+function Home(props) {
     return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text>Home!</Text>
+            <Button title={'Jobs'} onPress={() => {
+                props.navigation.navigate({
+                    routeName: 'JobList'
+                })
+            }}>
+            </Button>
         </View>
     );
 }
 
-const styles = St
 
 export default Home

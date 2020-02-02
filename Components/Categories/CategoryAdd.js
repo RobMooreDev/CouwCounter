@@ -1,30 +1,58 @@
 import React, {useState} from "react";
-import {StyleSheet, View} from 'react-native';
-import {ColorPicker} from 'react-native-color-picker';
+import {Button, StyleSheet, View} from 'react-native';
+import {Container, Content, Form, Input, Item, Label} from 'native-base';
+import database from "../../Database/database";
+import NavBar from "../Navigation/NavBar";
 
+function CategoryAdd(props) {
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const color = props.navigation.getParam('newColor', '#232323');
+    const textColor = props.navigation.getParam('text', '#f2f2f2');
 
-
-function CategoryAdd() {
-    const [color, setColor] = useState('');
+    const styles = StyleSheet.create({
+        colorButton: {
+            color: textColor
+        }
+    });
     return (
-        <View style={styles.container}>
-            <ColorPicker
-                oldColor='purple'
-                color={color}
-                onColorChange={color => setColor(color)}
-                onColorSelected={color => alert(`Color selected: ${color}`)}
-                onOldColorSelected={color => alert(`Old color selected: ${color}`)}
-                style={{flex: 1}}
+        <Container>
+            <NavBar
+                navigation={props.navigation}
+                title={'Add Category'}
             />
-        </View>
+            <Content>
+                    <Form>
+                        <Item stackedLabel>
+                            <Label>Name</Label>
+                            <Input placeholder='' onChangeText={(value) => setName(value)}/>
+                        </Item>
+                        <Item stackedLabel last>
+                            <Label>Description</Label>
+                            <Input placeholder=''
+                                   onChangeText={(value) => setDescription(value)}/>
+                        </Item>
+                        <Button color={color} style={styles.colorButton} title='Add Barcode' onPress={() => {
+                            props.navigation.navigate({
+                                routeName: 'SelectColor',
+                                params: {
+                                    parent: 'CategoryAdd',
+                                    oldColor: `${color}`
+                                }
+                            })
+                        }}/>
+                        <Button title='Create category' onPress={() => {
+                            database.createCategory(name, description, color);
+                            database.viewAllCategory().then((result) => {
+                                props.navigation.navigate('CategoryList', {
+                                    list: result
+                                });
+                            })
+                        }}/>
+                    </Form>
+            </Content>
+        </Container>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {flex: 1, padding: 45, backgroundColor: '#212021'}
-})
-
-
-
-
-export default CategoryAdd;
+export default CategoryAdd

@@ -1,12 +1,12 @@
 import React from "react";
 import {createDrawerNavigator} from 'react-navigation-drawer'
 import {createAppContainer} from "react-navigation";
-
 import Home from '../Home'
 import JobTabs from './JobTabs'
-import ItemTabs from './ItemTabs'
-import CategoryTabs from './CategoryTabs'
+import CategoryStack from './CategoryStack'
 import SettingTabs from './SettingTabs'
+import ItemStack from "./ItemStack";
+
 
 const MyDrawerNavigator = createDrawerNavigator({
     Home: {
@@ -16,10 +16,10 @@ const MyDrawerNavigator = createDrawerNavigator({
         screen: JobTabs,
     },
     Items: {
-        screen: ItemTabs,
+        screen: ItemStack,
     },
     Categories: {
-        screen: CategoryTabs,
+        screen: CategoryStack
     },
     Settings: {
         screen: SettingTabs,
