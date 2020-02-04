@@ -1,24 +1,61 @@
 import React, {useState} from 'react';
-import {Body, Button, Header, Icon, Left, Right, Title, View} from 'native-base';
-
+import {Body, Button, Header, Icon, Left, Right, Title} from 'native-base';
+import {StatusBar, StyleSheet} from 'react-native';
 export default function NavBar(props) {
     const [lock, setLock] = useState(true);
     const routeName = props.navigation.state.routeName;
-    let lockIcon = (<Button transparent onPress={() => {
+    const styles = StyleSheet.create({
+        barcode: {
+            color: props.barcode ? 'lightgreen' : 'white'
+        },
+        image: {
+            color: props.image ? 'lightgreen' : 'white'
+        }
+    });
+    const lockIcon = <Button transparent onPress={() => {
         props.setLock(!lock);
         setLock(!lock)
     }}>
         {lock ? <Icon name='lock'/> : <Icon name='unlock'/>}
-    </Button>)
-    let addIcon = (<Button transparent onPress={() => {
-        props.navigation.navigate('CategoryAdd')
+    </Button>;
+    const addIcon = <Button transparent onPress={() => {
+        const routeSwitch = (routeName) => ({
+            "CategoryList": "CategoryAdd",
+            "ItemList": "ItemAdd",
+            "JobList": "JobAdd"
+        })[routeName];
+        props.navigation.navigate(routeSwitch(routeName));
     }}>
-      <Icon type='FontAwesome' name='plus'/>
-    </Button>)
-    let icons = (routeName == 'CategoryList') ? (<View><lockIcon/><addIcon/></View>) : null;
-    return (
+        <Icon type='FontAwesome' name='plus'/>
+    </Button>;
+    let icons;
 
-        <Header>
+    if(`${routeName}`.includes('List')){
+        icons = <>
+            {lockIcon}
+            {addIcon}
+        </>;
+    }
+    if(`${routeName}`.includes('ItemAdd')){
+        icons = <>
+            <Button transparent onPress={()=>{
+                props.navigation.navigate({
+                    routeName: 'Image'
+                })
+            }}>
+                <Icon name={'image'} style={styles.image}></Icon>
+            </Button>
+            <Button transparent onPress={()=>{
+                props.navigation.navigate({
+                    routeName: 'Barcode'
+                })
+            }}>
+                <Icon name={'barcode'} style={styles.barcode}></Icon>
+            </Button>
+        </>;
+    }
+    return (
+        <Header style={{marginTop: StatusBar.currentHeight}}>
             <Left>
                 <Button transparent onPress={() => {
                     props.navigation.toggleDrawer();
@@ -30,8 +67,8 @@ export default function NavBar(props) {
                 <Title>{props.title}</Title>
             </Body>
             <Right>
-                {lockIcon}
-                {addIcon}
+                {icons}
+
                 <Button transparent onPress={() => {
                     props.navigation.goBack(null);
                 }}>
@@ -41,3 +78,4 @@ export default function NavBar(props) {
         </Header>
     );
 }
+

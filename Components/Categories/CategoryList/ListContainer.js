@@ -22,9 +22,7 @@ function ListContainer(props) {
         database.viewAllCategory().then((result) => {
             updateList(result)
         })
-        console.log(list)
         updateList(list)
-        console.log(list)
         setRefreshing(false);
     });
 
@@ -32,7 +30,6 @@ function ListContainer(props) {
         <Container>
             <SafeAreaView>
                 <NavBar navigation={props.navigation} setLock={setLock} title={'Categories'}/>
-
                 <ScrollView
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={getList}/>}>
                     <NavigationEvents

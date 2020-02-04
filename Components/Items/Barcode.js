@@ -1,72 +1,57 @@
-import React, {useState} from "react";
-import {StyleSheet, View} from 'react-native';
-import {ColorPicker, fromHsv} from 'react-native-color-picker';
-import {Button, Icon, Text} from 'native-base'
-import database from "../../Database/database";
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, Button } from 'react-native';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
-function Barcode(props) {
-    const [color, setColor] = useState('');
-    const parent = props.navigation.getParam('parent');
-    const id = props.navigation.getParam('id');
-    const oldColor = props.navigation.getParam('oldColor', '#fefefe');
+export default function Barcode(props) {
+    const [hasPermission, setHasPermission] = useState(null);
+    const [scanned, setScanned] = useState(false);
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            padding: 45,
-            backgroundColor: '#212021'
-        },
-        picker: {
-            flex: 1,
-            marginBottom: 40
-        },
-        buttonText: {
-            color: contrastText(color),
-        },
-        button: {
-            justifyContent: "center",
-            backgroundColor: fromHsv(color)
-        }
-    });
+    useEffect(() => {
+        (async () => {
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            setHasPermission(status === 'granted');
+        })();
+    }, []);
 
-    function contrastText(hex) {
-        const threshold = 130;
-        function cutHex(hex) {
-            return (hex.charAt(0) === "#") ? hex.substring(1, 7) : hex
-        }
-        const R = parseInt((cutHex(hex)).substring(0, 2), 16);
-        const G = parseInt((cutHex(hex)).substring(2, 4), 16);
-        const B = parseInt((cutHex(hex)).substring(0, 2), 16);
-        const brightness = ((R * 299) + (G * 587) + (B * 114)) / 1000;
-        return (brightness > threshold) ? "#000000" : "#FFFFFF"
+    const handleBarCodeScanned = ({ type, data }) => {
+        console.log(data)
+        setScanned(true);
+        props.navigation.navigate({
+            routeName: 'ItemAdd',
+            params: {
+                barcode: data
+            }
+        })
+    };
+
+    if (hasPermission === null) {
+        return <Text>Requesting for camera permission</Text>;
+    }
+    if (hasPermission === false) {
+        return <Text>No access to camera</Text>;
     }
 
     return (
-        <View style={styles.container}>
-            <Icon style={{textAlign:'right', color: '#f2f2f2'}} type='FontAwesome' name='times-circle' onPress={()=>{
-                props.navigation.replace((parent === 'CategoryList') ? 'CategoryList' : 'CategoryAdd')
-            }}/>
-            <ColorPicker
-                oldColor={oldColor}
-                defaultColor={'lightblue'}
-                onColorChange={(color)=>{
-                    const newHex = fromHsv(color);
-                    setColor(newHex);
-                }}
-                style={styles.picker}
+        <View
+            style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+            }}>
+            <BarCodeScanner
+                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                style={StyleSheet.absoluteFillObject}
             />
-            <Button style={styles.button} color={color || oldColor} onPress={() => {
-                database.updateColor(color, id);
+
+            {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+            <Button title={'Clear barcode'} onPress={() => {
                 props.navigation.navigate({
-                    routeName: `${parent}`,
+                    routeName: 'ItemAdd',
                     params: {
-                        newColor: fromHsv(color),
-                        id: props.id
+                        barcode: ''
                     }
                 })
-            }}><Text style={styles.buttonText}>{(parent === 'CategoryList') ? 'Update Barcode' : 'Set Barcode'}</Text></Button>
+            }} />
         </View>
     );
 }
-
-export default Barcode;

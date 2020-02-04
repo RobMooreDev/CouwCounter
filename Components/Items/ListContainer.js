@@ -5,6 +5,7 @@ import {NavigationEvents} from 'react-navigation';
 import CategoryList from "./ItemList";
 import {RefreshControl, SafeAreaView, ScrollView, View} from "react-native";
 import NavBar from "../Navigation/NavBar";
+import ItemList from "./ItemList";
 function ListContainer(props) {
     const [lock, setLock] = useState(true)
     const [list, updateList] = useState([]);
@@ -41,11 +42,16 @@ function ListContainer(props) {
                             {list.map((list, i) => {
                                 return (
                                     <View key={i}>
-                                    <CategoryList
+                                    <ItemList
                                         id={list.category_id}
                                         model={list.item_model}
                                         brand={list.item_brand}
-                                        color={list.category_color}
+                                        model={list.item_model}
+                                        description={list.item_description}
+                                        image={list.item_image}
+                                        barcode={list.item_barcode}
+                                        price={list.item_price}
+                                        category={list.item_category}
                                         props={props.navigation}
                                         locked={lock}
                                         refresh={()=>{

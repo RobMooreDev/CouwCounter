@@ -32,7 +32,7 @@ function CategoryAdd(props) {
                             <Input placeholder=''
                                    onChangeText={(value) => setDescription(value)}/>
                         </Item>
-                        <Button color={color} style={styles.colorButton} title='Add Barcode' onPress={() => {
+                        <Button color={color} style={styles.colorButton} title='Add Color' onPress={() => {
                             props.navigation.navigate({
                                 routeName: 'SelectColor',
                                 params: {

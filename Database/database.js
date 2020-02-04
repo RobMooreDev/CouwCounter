@@ -57,6 +57,19 @@ let database = {
         }, () => {
             console.log('Tables have been loaded successfully.');
         })
+        db.transaction(tx => {
+            tx.executeSql(`
+               CREATE TABLE item (item_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, item_model TEXT NOT NULL, item_brand TEXT NOT NULL, item_description TEXT, item_barcode TEXT, item_image TEXT NOT NULL DEFAULT 'image', item_price REAL NOT NULL DEFAULT 0.0, item_category INTEGER);
+                `, [], (tx, result) => {
+            }, (tx, e) => {
+                console.log('create error');
+            })
+        }, (e) => {
+            console.log('create tx error');
+        }, () => {
+            console.log('Tables have been loaded successfully.');
+        })
+
     },
     reset: () => {
         return new Promise((resolve, reject) => {
@@ -134,7 +147,7 @@ let database = {
             console.log('updated color successfully.');
         })
     },
-    viewAllCategory: () => {
+    viewAllCategory: async () => {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(`
@@ -181,14 +194,14 @@ let database = {
     createItem: (model, brand, description, barcode, image, price, category) => {
         db.transaction(tx => {
             tx.executeSql(`
-                INSERT INTO CATEGORY(item_model, item_brand, item_description, item_barcode, item_image, item_price, item_category) VALUES (?, ?, ?, ?, ?, ? ,?);
+                INSERT INTO item(item_model, item_brand, item_description, item_barcode, item_image, item_price, item_category) VALUES (?, ?, ?, ?, ?, ?, ?);
                 `, [model, brand, description, barcode, image, price, category], (tx, result) => {
                 console.log(result);
             }, (tx, e) => {
-                console.log('create error');
+                console.log(e.message);
             })
         }, (e) => {
-            console.log('create error');
+            console.log('create item error');
         }, () => {
             database.create();
             console.log('Category created successfully.');
