@@ -23,7 +23,7 @@
     "native-base": "^2.13.8",
     "react": "16.9.0",
     "react-dom": "16.9.0",
-    "react-native": "^0.61.5",
+    "react-native": "^0.62.3",
     "react-native-barcode-builder": "^1.0.5",
     "react-native-color-picker": "^0.4.6",
     "react-native-color-wheel": "^0.1.7",
